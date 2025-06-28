@@ -1,28 +1,49 @@
+import java.util.Stack;
+
 class Solution {
     public int evalRPN(String[] tokens) {
+        if (tokens == null || tokens.length == 0) {
+            return 0;
+        }
+
         Stack<Integer> stack = new Stack<>();
 
         for (String token : tokens) {
-            // If token is an operator
-            if (token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/")) {
-                int b = stack.pop();  // right operand
-                int a = stack.pop();  // left operand
-                int result = 0;
-
-                switch (token) {
-                    case "+": result = a + b; break;
-                    case "-": result = a - b; break;
-                    case "*": result = a * b; break;
-                    case "/": result = a / b; break;  // integer division truncates toward 0
-                }
-
-                stack.push(result);
-            } else {
-                // If token is a number
-                stack.push(Integer.parseInt(token));
+            switch (token) {
+                case "+":
+                    if (stack.size() < 2) throw new IllegalArgumentException("Invalid RPN expression");
+                    stack.push(stack.pop() + stack.pop());
+                    break;
+                case "*":
+                    if (stack.size() < 2) throw new IllegalArgumentException("Invalid RPN expression");
+                    stack.push(stack.pop() * stack.pop());
+                    break;
+                case "-":
+                    if (stack.size() < 2) throw new IllegalArgumentException("Invalid RPN expression");
+                    int b = stack.pop();
+                    int a = stack.pop();
+                    stack.push(a - b);
+                    break;
+                case "/":
+                    if (stack.size() < 2) throw new IllegalArgumentException("Invalid RPN expression");
+                    int divisor = stack.pop();
+                    int dividend = stack.pop();
+                    if (divisor == 0) throw new ArithmeticException("Division by zero");
+                    stack.push(dividend / divisor);
+                    break;
+                default:
+                    try {
+                        stack.push(Integer.parseInt(token));
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Invalid token: " + token);
+                    }
             }
         }
 
-        return stack.pop();  // final result
+        if (stack.size() != 1) {
+            throw new IllegalArgumentException("Invalid RPN expression");
+        }
+        
+        return stack.pop();
     }
 }
