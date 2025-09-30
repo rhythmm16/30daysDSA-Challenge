@@ -1,4 +1,3 @@
-```java
 class Solution {
     public int compress(char[] chars) {
         int n = chars.length;
@@ -29,4 +28,3 @@ class Solution {
         return write; // new length of compressed array
     }
 }
-```
